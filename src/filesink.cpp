@@ -18,6 +18,7 @@ namespace g3 {
       : _log_file_with_path(log_directory)
       , _log_prefix_backup(log_prefix)
       , _outptr(new std::ofstream)
+	  , _minLogLevel(0)
    {
       _log_prefix_backup = prefixSanityFix(log_prefix);
       if (!isValidFilename(_log_prefix_backup)) {
@@ -50,8 +51,10 @@ namespace g3 {
 
    // The actual log receiving function
    void FileSink::fileWrite(LogMessageMover message) {
-      std::ofstream &out(filestream());
-      out << message.get().toString();
+	   if (message.get()._level.value >= _minLogLevel) {
+		   std::ofstream &out(filestream());
+		   out << message.get().toString() << std::flush;
+	   }
    }
 
    std::string FileSink::changeLogFile(const std::string &directory) {
@@ -84,6 +87,9 @@ namespace g3 {
    }
    std::string FileSink::fileName() {
       return _log_file_with_path;
+   }
+   void FileSink::setMinLogLevel(int value) {
+	   _minLogLevel = value;
    }
    void FileSink::addLogFileHeader() {
       filestream() << header();

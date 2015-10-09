@@ -21,12 +21,13 @@ namespace g3 {
       void fileWrite(LogMessageMover message);
       std::string changeLogFile(const std::string &directory);
       std::string fileName();
-
+	  void setMinLogLevel(int value);
 
    private:
       std::string _log_file_with_path;
       std::string _log_prefix_backup; // needed in case of future log file changes of directory
       std::unique_ptr<std::ofstream> _outptr;
+	  int _minLogLevel;
 
       void addLogFileHeader();
       std::ofstream &filestream() {
